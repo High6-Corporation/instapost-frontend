@@ -1,7 +1,7 @@
 import Section from '@/components/layout/Section'
 import Row from '@/components/layout/Row'
 import ScrollAnimationWrapper from '@/components/global/ScrollAnimationWrapper'
-import type { AboutWhyWeStandSection } from '@/lib/about'
+import type { AboutWhatWeStandSection } from '@/lib/about'
 
 // Fallback content (mirrors the reference copy) — used only until the CMS fields are filled.
 const FALLBACK_HEADING = 'What we stand for'
@@ -35,12 +35,12 @@ const FALLBACK_VALUES = [
   },
 ]
 
-interface WhyWeStandSectionProps {
-  data?: AboutWhyWeStandSection | null
+interface WhatWeStandSectionProps {
+  data?: AboutWhatWeStandSection | null
 }
 
 // Mirrors the homepage BuiltForBrandsSection treatment: gold radial card + divided title/description list.
-export function WhyWeStandSection({ data }: WhyWeStandSectionProps) {
+export function WhatWeStandSection({ data }: WhatWeStandSectionProps) {
   const heading = data?.mainHeading || FALLBACK_HEADING
   const subtext = data?.subtext || FALLBACK_SUBTEXT
 
@@ -89,4 +89,4 @@ export function WhyWeStandSection({ data }: WhyWeStandSectionProps) {
   )
 }
 
-export default WhyWeStandSection
+export default WhatWeStandSection

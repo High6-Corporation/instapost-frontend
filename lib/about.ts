@@ -80,7 +80,7 @@ export interface AboutValueItem {
   valueTitle: string
   valueDescription: string
 }
-export interface AboutWhyWeStandSection {
+export interface AboutWhatWeStandSection {
   mainHeading: string
   subtext: string
   valuesList: AboutValueItem[]
@@ -131,7 +131,7 @@ export interface AboutDynamicContent {
   missionAndVisionSection: AboutMissionVisionSection
   whyWeExistSection: AboutWhyWeExistSection
   ourPromiseSection: AboutOurPromiseSection
-  whyWeStandSection: AboutWhyWeStandSection
+  whatWeStandSection: AboutWhatWeStandSection
   statsSection: AboutStatsSection
   foundersSection: AboutFoundersSection
   empoweringSection: AboutEmpoweringSection
@@ -146,7 +146,7 @@ export interface AboutPageData {
 // ── Persisted Query ID ───────────────────────────────────────────────────────
 
 const ABOUT_PAGE_QUERY_ID =
-  'f165d99b6bae1c3a0e6dd74e7513026fa803c828686968bfd1cc7658ca263c57'
+  '8a1ba5c786b12e184c76f8da62eabf3fa9f1863d4c2bf178754d45afd6b18ad4'
 
 // ── Fetch ────────────────────────────────────────────────────────────────────
 

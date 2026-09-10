@@ -5,7 +5,7 @@ import { MediaTextSection } from '@/components/shared/MediaTextSection'
 import { MissionVisionSection } from '@/components/sections/about/MissionVisionSection'
 import { WhyWeExistSection } from '@/components/sections/about/WhyWeExistSection'
 import { OurPromiseSection } from '@/components/sections/about/OurPromiseSection'
-import { WhyWeStandSection } from '@/components/sections/about/WhyWeStandSection'
+import { WhatWeStandSection } from '@/components/sections/about/WhatWeStandSection'
 import { StatsSection } from '@/components/sections/about/StatsSection'
 import { FoundersSection } from '@/components/sections/about/FoundersSection'
 import { EmpoweringSection } from '@/components/sections/about/EmpoweringSection'
@@ -73,8 +73,8 @@ export default async function AboutPage() {
       {/* Our Promise Section */}
       <OurPromiseSection data={dc?.ourPromiseSection} />
 
-      {/* Why We Stand Section */}
-      <WhyWeStandSection data={dc?.whyWeStandSection} />
+      {/* What We Stand Section */}
+      <WhatWeStandSection data={dc?.whatWeStandSection} />
 
       {/* Stats Section */}
       <StatsSection data={dc?.statsSection} />
