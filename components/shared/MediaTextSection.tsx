@@ -80,7 +80,7 @@ export function MediaTextSection({
         )}
 
         {/* Text Column */}
-        <div className="w-full flex flex-col gap-[24px] md:gap-[30px]">
+        <div className="w-full flex flex-col gap-[24px] md:gap-[30px] min-[1140px]:items-start items-center text-center min-[1140px]:text-left">
           {/* Title */}
           <h2 className={`heading-2 font-normal ${titleColor}`}>
             {title}

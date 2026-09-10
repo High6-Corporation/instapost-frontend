@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  InstaPost — Client Content Editing Guide · REUSABLE TEMPLATE
+  ============================================================================
+
+  HOW TO USE
+  1. Copy this file and rename it:  docs/instapost-<page>-content-guide.html
+     (e.g. instapost-content-guide.html = homepage, instapost-about-content-guide.html = About)
+  2. Replace every {{DOUBLE-CURLY}} placeholder with real text.
+  3. Duplicate one <div class="section-card"> block per editable section, in the
+     SAME order the sections appear on the live page.
+  4. Delete these instructional comments and any unused blocks before shipping.
+  5. To export a PDF: open the file in a browser -> Print -> Save as PDF.
+
+  HARD RULES (keep our format consistent)
+  - PURE TEXT ONLY. Never add <img>, screenshots, icons or background images.
+  - Self-contained: keep all CSS in the single <style> block below; no external files.
+  - Language: plain, friendly, second-person English. Assume zero technical knowledge.
+  - Field names written inside <strong>...</strong> must MATCH the exact label the
+    client sees in the WordPress/ACF editor (the humanized version of the GraphQL field,
+    e.g. preHeader -> "Pre-Header", main_heading -> "Main Heading").
+  - Document EVERY dynamic section the page exposes, top to bottom.
+  - A section whose content is fixed by code (e.g. a shared CTA banner) is NOT a card;
+    mention it in a closing .note instead.
+  - Always end each "How to edit" list with a click on Update.
+
+  STYLE TOKENS
+  --primary  #D01F25 (InstaPost red)      --secondary #FDD10D (InstaPost yellow)
+  --ink #1a1a1a  --muted #555  --line #e2e2e2  --bg-soft #fafafa
+
+  BLOCKS
+  header.doc-head   -> title + subtitle (red underline)
+  .golden           -> the "Golden Rules" box
+  .section-card     -> one editable section (PLAIN text, no border)
+  .what             -> muted one-line description under a section title
+  .note             -> cream callout with a yellow left edge (tips, caveats)
+  .footer           -> the centered footer line
+  h2 keeps a yellow underline; h3 is red; code/kbd are grey chips.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>InstaPost {{PAGE NAME}} — Content Editing Guide</title>
+<style>
+  :root {
+    --primary: #D01F25;
+    --secondary: #FDD10D;
+    --ink: #1a1a1a;
+    --muted: #555;
+    --line: #e2e2e2;
+    --bg-soft: #fafafa;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    line-height: 1.6;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+    font-size: 15px;
+  }
+  header.doc-head {
+    border-bottom: 4px solid var(--primary);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+  }
+  header.doc-head h1 {
+    margin: 0 0 6px;
+    font-size: 30px;
+    line-height: 1.2;
+  }
+  header.doc-head p {
+    margin: 0;
+    color: var(--muted);
+    font-style: italic;
+  }
+  h2 {
+    font-size: 21px;
+    margin: 40px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--secondary);
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 22px 0 6px;
+    color: var(--primary);
+    page-break-after: avoid;
+  }
+  p { margin: 8px 0; }
+  ol, ul { margin: 8px 0 8px 4px; padding-left: 22px; }
+  li { margin: 4px 0; }
+  a { color: var(--primary); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 14px;
+    page-break-inside: avoid;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { background: var(--bg-soft); font-weight: 700; }
+  /* Section cards are PLAIN text on purpose — no border, no box, flush left. */
+  .section-card {
+    padding: 0;
+    margin: 34px 0;
+    page-break-inside: avoid;
+  }
+  .section-card > h2 {
+    margin-top: 0;
+  }
+  .what {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 2px 0 14px;
+  }
+  .note {
+    background: #fff8e1;
+    border-left: 4px solid var(--secondary);
+    padding: 10px 14px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    page-break-inside: avoid;
+  }
+  .note strong { color: #8a6d00; }
+  .golden {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 6px 22px 16px;
+    margin: 16px 0;
+  }
+  code, kbd {
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 13px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  }
+  .footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  @media print {
+    body { padding: 0; font-size: 12.5px; max-width: 100%; }
+    h2 { font-size: 18px; }
+    a { color: var(--ink); text-decoration: none; }
+    header.doc-head { break-after: page; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 1) HEADER -->
+<header class="doc-head">
+  <h1>InstaPost {{PAGE NAME}} — Content Editing Guide</h1>
+  <p>A step-by-step guide for updating the {{page name}}. No technical knowledge required.</p>
+</header>
+
+<!-- 2) BEFORE YOU BEGIN (shared intro — mostly reusable across guides) -->
+<h2>Before You Begin</h2>
+
+<h3>What you need</h3>
+<ul>
+  <li>Your WordPress login (the admin link and your username/password). If you don't have these, ask your developer.</li>
+</ul>
+
+<h3>Key terms used in this guide</h3>
+<table>
+  <thead>
+    <tr><th style="width:28%">Term</th><th>What it means</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Field</strong></td><td>A box where you type content (e.g. a heading or description).</td></tr>
+    <tr><td><strong>Section</strong></td><td>One block of the {{page name}} (e.g. {{example section}}).</td></tr>
+    <tr><td><strong>Row / Card</strong></td><td>A repeated item inside a section (e.g. {{example repeated item}}).</td></tr>
+    <tr><td><strong>Add Row / + button</strong></td><td>Adds another card/item to a list.</td></tr>
+    <tr><td><strong>Minus / × button</strong></td><td>Removes that card/item.</td></tr>
+    <tr><td><strong>Update</strong></td><td>The button that saves your changes and makes them live.</td></tr>
+    <tr><td><strong>Bold (B)</strong></td><td>The <strong>B</strong> button that makes selected text stand out.</td></tr>
+  </tbody>
+</table>
+
+<h3>Golden Rules</h3>
+<div class="golden">
+  <ol>
+    <li><strong>Always click "Update" (top-right) when you finish.</strong> Changes are not saved — and not visible on the site — until you do.</li>
+    <li><strong>Don't paste from Word or Google Docs directly</strong> if the text looks strange. Use <em>Paste as plain text</em> (right-click → Paste as plain text, or <kbd>Ctrl/Cmd + Shift + V</kbd>), then re-apply bold.</li>
+    <li><strong>To make text stand out, select it first, then click the B (Bold) button.</strong> In some sections, bold text automatically appears in the brand colour — you don't need to change any colour setting.</li>
+    <li><strong>Leave a field empty only if you're sure it should be blank.</strong> Empty optional fields fall back to a default.</li>
+    <li><strong>The bold names in each step below match the field labels in the editor.</strong> If one reads slightly differently, it's the same field.</li>
+  </ol>
+</div>
+
+<!-- 3) HOW TO OPEN THE EDITOR -->
+<h2>How to Open the {{Page Name}} Editor</h2>
+<ol>
+  <li>Log in to the WordPress admin.</li>
+  <li>In the left menu, click <strong>Pages</strong>.</li>
+  <li>Find <strong>{{WP Page Title}}</strong> in the list and click to edit it.</li>
+  <li>Scroll down to reach the <strong>{{ACF Field Group Label}}</strong> area — this holds all the sections below, in order.</li>
+</ol>
+
+<!-- 4) ONE section-card PER EDITABLE SECTION — duplicate this block, keep page order -->
+<div class="section-card">
+  <h2>1. {{Section Name}} Section</h2>
+  <p class="what">{{One-line plain description of what this section is on the page.}}</p>
+  <h3>How to edit</h3>
+  <ol>
+    <li>Find <strong>{{Section Name}} Section</strong>.</li>
+    <li>Edit the <strong>{{Field Label}}</strong> and <strong>{{Field Label}}</strong>.</li>
+    <li>Click the <strong>{{Image Field Label}}</strong> to upload or replace the photo.</li>
+    <li>Click <strong>Update</strong>.</li>
+  </ol>
+  <div class="note">{{Optional tip or caveat — e.g. a repeated list needs Add Row, or bold turns text red.}}</div>
+</div>
+
+<!-- ...repeat the section-card block for every other section, numbering 2, 3, 4... -->
+
+<!-- If a section is FIXED by code (not editable), don't make a card; note it here -->
+<!-- <div class="note"><strong>About the {{name}} block:</strong> this is fixed by the developer and can't be edited from the page fields yet. Ask your developer to change it.</div> -->
+
+<!-- 5) QUICK TROUBLESHOOTING -->
+<h2>Quick Troubleshooting</h2>
+<table>
+  <thead>
+    <tr><th style="width:45%">Problem</th><th>What to do</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>My changes aren't showing on the site.</td><td>You didn't click <strong>Update</strong>. Open the page again and click it.</td></tr>
+    <tr><td>The text looks weird / has strange spacing.</td><td>You pasted from another program. Re-paste using <strong>Paste as plain text</strong>, then re-apply bold.</td></tr>
+    <tr><td>Bold didn't turn the brand colour.</td><td>Make sure you <strong>selected the text first</strong>, then clicked <strong>B</strong>.</td></tr>
+    <tr><td>A row / card is missing.</td><td>Check that its fields aren't empty, and that you saved.</td></tr>
+  </tbody>
+</table>
+
+<!-- 6) FOOTER -->
+<div class="footer">
+  InstaPost — Content Editing Guide · {{Page Name}} · For questions, contact your developer.
+</div>
+
+</body>
+</html>

@@ -1,123 +1,164 @@
 import { wpGraphQLPersistedQuery } from '@/lib/wp-graphql'
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Reusable shapes ──────────────────────────────────────────────────────────
 
-export interface AboutCoreValueItem {
-  title: string
-  paragarph: string
-  icon: {
-    node: {
-      sourceUrl: string
-    }
-  }
+/** Single image relation (e.g. hero background) → { node { ... } } */
+interface ImageField {
+  node: {
+    sourceUrl: string
+    altText: string
+  } | null
 }
 
-export interface AboutCoreValueSection {
-  valuesImage: {
-    node: {
-      sourceUrl: string
-    }
-  }
-  valuesList: AboutCoreValueItem[]
+/** Image relation queried for sourceUrl only (e.g. mission image, founder profile) */
+interface MediaField {
+  node: {
+    sourceUrl: string
+  } | null
 }
 
-export interface AboutIntroduction {
-  introductionTitle: string
-  introductionParagraph: string
-  introductionImage: {
+// ── Section types (mirrors the GetAboutUsPage persisted query) ─────────────────
+
+export interface AboutHeroSection {
+  preHeader: string
+  mainHeading: string
+  subtext: string
+  backgroundImage: ImageField | null
+}
+
+export interface AboutIntroductionSection {
+  mainHeading: string
+  subtext: string
+  introductionImage: MediaField | null
+}
+
+export interface AboutVideoListItem {
+  video: {
     node: {
-      sourceUrl: string
+      guid: string
     }
-  }
+  } | null
 }
 
 export interface AboutMissionContent {
   missionTitle: string
   missionParagraph: string
 }
-
 export interface AboutVisionContent {
   visionTitle: string
   visionParagraph: string
 }
-
 export interface AboutMissionVisionSection {
-  missionAndVisionImage: {
-    node: {
-      sourceUrl: string
-    }
-  }
+  missionAndVisionImage: MediaField | null
   missionContents: AboutMissionContent[]
   visionContents: AboutVisionContent[]
 }
 
-export interface AboutTeamMember {
-  teamMembersImage: {
-    node: {
-      sourceUrl: string
-    }
-  }
+export interface AboutWhyWeExistSection {
+  preHeader: string
+  mainHeading: string
+  bodyContent: string
+  highlightQuote: string
+  footerContent: string
+}
+
+export interface AboutPromiseItem {
+  itemText: string
+}
+export interface AboutSignatureItem {
   name: string
-  role: string
+  position: string
+}
+export interface AboutOurPromiseSection {
+  preHeaderLeft: string
+  preHeaderRight: string
+  promiseList: AboutPromiseItem[]
+  signatureList: AboutSignatureItem[]
 }
 
-export interface AboutOurTeamSection {
-  teamTitle: string
-  teamParagraph: string
-  teamMembersImage: AboutTeamMember[] | null
+export interface AboutValueItem {
+  valueTitle: string
+  valueDescription: string
+}
+export interface AboutWhyWeStandSection {
+  mainHeading: string
+  subtext: string
+  valuesList: AboutValueItem[]
 }
 
-export interface AboutStandOutItem {
+export interface AboutStatItem {
+  statValue: string
+  subtext: string
+}
+export interface AboutStatsSection {
+  statsList: AboutStatItem[]
+}
+
+export interface AboutFounderItem {
+  profile: MediaField | null
+  name: string
+  position: string
+  description: string
+}
+export interface AboutFoundersSection {
+  mainHeading: string
+  subtext: string
+  foundersList: AboutFounderItem[]
+  footerNote: string
+}
+
+export interface AboutRedirectionLink {
+  url: string
   title: string
-  paragarph: string
-  icon: {
-    node: {
-      sourceUrl: string
-    }
-  }
+  target: string | null
+}
+export interface AboutEmpoweringSection {
+  preHeader: string
+  mainHeading: string
+  subtext: string
+  redirectionLink: AboutRedirectionLink | null
 }
 
-export interface AboutStandOutSection {
-  standOutTitle?: string
-  standOut: AboutStandOutItem[]
-  standOutImage: {
-    node: {
-      sourceUrl: string
-    }
-  }
-}
-
-export interface AboutVideoBanner {
-  node: {
-    mediaItemUrl: string | null
-  }
+export interface AboutCtaSection {
+  mainHeading: string
+  subtext: string
 }
 
 export interface AboutDynamicContent {
-  introduction: AboutIntroduction
-  videoBanner: AboutVideoBanner
+  heroSection: AboutHeroSection
+  introductionSection: AboutIntroductionSection
+  videoListSection: AboutVideoListItem[]
   missionAndVisionSection: AboutMissionVisionSection
-  coreValueSection: AboutCoreValueSection
-  standOutSection: AboutStandOutSection
-  ourTeamSection: AboutOurTeamSection
+  whyWeExistSection: AboutWhyWeExistSection
+  ourPromiseSection: AboutOurPromiseSection
+  whyWeStandSection: AboutWhyWeStandSection
+  statsSection: AboutStatsSection
+  foundersSection: AboutFoundersSection
+  empoweringSection: AboutEmpoweringSection
+  ctaSection: AboutCtaSection
 }
 
 export interface AboutPageData {
   title: string
-  dynamicContent: AboutDynamicContent
+  dynamicContentAboutUsPage: AboutDynamicContent
 }
 
-// ── Persisted Query ID ──────────────────────────────────────────────────────
+// ── Persisted Query ID ───────────────────────────────────────────────────────
 
 const ABOUT_PAGE_QUERY_ID =
-  'fe74ae901a85e0979c175514105401c66547dbc2c5e3ce506db198631826fd34'
+  'f165d99b6bae1c3a0e6dd74e7513026fa803c828686968bfd1cc7658ca263c57'
 
 // ── Fetch ────────────────────────────────────────────────────────────────────
 
 export async function getAboutPageData(): Promise<AboutPageData | null> {
-  const data = await wpGraphQLPersistedQuery<{ page: AboutPageData }>(
-    ABOUT_PAGE_QUERY_ID,
-    ['wordpress-pages'],
-  )
-  return data.page
+  try {
+    const data = await wpGraphQLPersistedQuery<{ pageBy: AboutPageData }>(
+      ABOUT_PAGE_QUERY_ID,
+      ['wordpress-pages'],
+    )
+    return data.pageBy
+  } catch (err) {
+    console.error('[about] Failed to load About page data:', err)
+    return null
+  }
 }
