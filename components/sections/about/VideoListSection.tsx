@@ -56,8 +56,6 @@ export function VideoListSection({ data }: VideoListSectionProps) {
     setPlayingId(null)
   }, [perView, currentSlide])
 
-  if (videos.length === 0) return null
-
   const isSlider = videos.length > perView
   const maxSlideIndex = Math.max(0, videos.length - perView)
 
@@ -65,6 +63,9 @@ export function VideoListSection({ data }: VideoListSectionProps) {
   useEffect(() => {
     if (currentSlide > maxSlideIndex) setCurrentSlide(maxSlideIndex)
   }, [maxSlideIndex, currentSlide])
+
+  // Early return must come AFTER all hooks (React rules-of-hooks).
+  if (videos.length === 0) return null
 
   const renderCard = (video: VideoListItem) => (
     <div
