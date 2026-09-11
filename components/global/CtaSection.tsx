@@ -5,7 +5,23 @@ import Button from '@/components/ui/Button'
 import Link from 'next/link'
 import ScrollAnimationWrapper from '@/components/global/ScrollAnimationWrapper'
 
-export function CtaSection() {
+// Fallback content — mirrors the previous hardcoded copy, so pages that pass no `data`
+// (services, packages, industries, agency, works) render exactly as before.
+const FALLBACK_HEADING = "Let's Build Your<br />Social Media Presence"
+const FALLBACK_SUBTEXT =
+  "Consistent content is the key to staying visible online.<br />Let Instapost handle your social media while you focus on running your business."
+
+interface CtaSectionProps {
+  data?: {
+    mainHeading: string
+    subtext: string
+  } | null
+}
+
+export function CtaSection({ data }: CtaSectionProps) {
+  const heading = data?.mainHeading || FALLBACK_HEADING
+  const subtext = data?.subtext || FALLBACK_SUBTEXT
+
   return (
     <ScrollAnimationWrapper>
       <Section className="bg-white relative overflow-hidden py-[40px] md:py-[64px] lg:py-[70px]">
@@ -27,16 +43,14 @@ export function CtaSection() {
         <div className="relative z-10 flex flex-col items-center gap-[32px]">
           {/* Text Content */}
           <div className="flex flex-col gap-4 items-center max-w-[770px] w-full">
-            <h2 className="heading-2 font-normal text-neutral-0 text-center">
-              Let&apos;s Build Your
-              <br />
-              Social Media Presence
-            </h2>
-            <p className="body-lg font-medium text-neutral-0 text-center">
-              Consistent content is the key to staying visible online.
-              <br />
-              Let Instapost handle your social media while you focus on running your business.
-            </p>
+            <h2
+              className="heading-2 font-normal text-neutral-0 text-center"
+              dangerouslySetInnerHTML={{ __html: heading }}
+            />
+            <p
+              className="body-lg font-medium text-neutral-0 text-center"
+              dangerouslySetInnerHTML={{ __html: subtext }}
+            />
           </div>
 
           {/* CTA Button */}
@@ -59,7 +73,7 @@ export function CtaSection() {
               alt="Social icons decoration"
               width={197}
               height={106}
-              className="object-contain"
+              className="object-contain opacity-60"
             />
           </div>
         </div>
@@ -72,7 +86,7 @@ export function CtaSection() {
               alt="Social icons decoration"
               width={182}
               height={99}
-              className="object-contain"
+              className="object-contain opacity-60"
             />
           </div>
         </div>

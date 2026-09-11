@@ -57,37 +57,40 @@ export function FoundersSection({ data }: FoundersSectionProps) {
             <p className="body-md text-text-secondary lg:max-w-[420px]">{subtext}</p>
           </div>
 
-          {/* Founder cards */}
-          <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2 ">
+          {/* Founder cards — portrait left, text right */}
+          <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
             {founders.map((founder, index) => {
               const avatar = founder.profile?.node?.sourceUrl
               return (
                 <div
                   key={index}
-                  className="flex flex-col gap-4 rounded-[16px] border border-border p-6 md:p-8 bg-bg-secondary max-lg:items-center max-lg:text-center"
+                  className="flex flex-col gap-5 rounded-[24px] border border-border bg-bg-secondary p-4 sm:flex-row sm:gap-6 sm:p-5"
                 >
+                  {/* Portrait — taller than the text block, and still stretches if the copy grows */}
                   {avatar ? (
-                    <Image
-                      src={avatar}
-                      alt={founder.name}
-                      width={128}
-                      height={128}
-                      className="h-16 w-16 rounded-full object-cover"
-                    />
+                    <div className="relative min-h-[260px] w-full shrink-0 overflow-hidden rounded-[20px] max-sm:max-w-[250px] max-sm:mx-auto sm:min-h-[280px] sm:w-[180px] lg:min-h-[300px] lg:w-[200px]">
+                      <Image
+                        src={avatar}
+                        alt={founder.name}
+                        fill
+                        sizes="(min-width: 1024px) 200px, (min-width: 640px) 180px, 100vw"
+                        className="object-cover object-top"
+                      />
+                    </div>
                   ) : (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0E1B33] font-sans text-lg font-semibold text-secondary">
+                    <div className="flex min-h-[260px] w-full shrink-0 items-center justify-center rounded-[20px] bg-[#0E1B33] font-sans text-2xl font-semibold text-secondary sm:min-h-[280px] sm:w-[180px] lg:min-h-[300px] lg:w-[200px]">
                       {getInitials(founder.name)}
                     </div>
                   )}
 
-                  <div className="flex flex-col gap-1">
-                    <h3 className="heading-3 font-semibold text-text-primary">{founder.name}</h3>
-                    <span className="body-xs font-semibold uppercase tracking-[0.15em] text-primary">
-                      {founder.position}
-                    </span>
-                  </div>
+                  <div className="flex flex-col gap-3 sm:justify-center sm:gap-4 max-sm:text-center">
+                    <div className="flex flex-col gap-1">
+                      <h3 className="heading-3 font-medium text-text-primary">{founder.name}</h3>
+                      <span className="body-sm text-primary">{founder.position}</span>
+                    </div>
 
-                  <p className="body-sm text-text-secondary">{founder.description}</p>
+                    <p className="body-sm text-text-secondary">{founder.description}</p>
+                  </div>
                 </div>
               )
             })}

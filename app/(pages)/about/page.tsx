@@ -86,7 +86,7 @@ export default async function AboutPage() {
       <EmpoweringSection data={dc?.empoweringSection} />
 
       {/* CTA Section */}
-      <CtaSection />
+      <CtaSection data={dc?.ctaSection} />
 
       {/* Footer */}
       <Footer />

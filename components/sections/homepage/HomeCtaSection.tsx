@@ -69,7 +69,7 @@ export function HomeCtaSection({ data }: HomeCtaSectionProps) {
               alt="Social icons decoration"
               width={197}
               height={106}
-              className="object-contain"
+              className="object-contain opacity-60"
             />
           </div>
         </div>
@@ -82,7 +82,7 @@ export function HomeCtaSection({ data }: HomeCtaSectionProps) {
               alt="Social icons decoration"
               width={182}
               height={99}
-              className="object-contain"
+              className="object-contain opacity-60"
             />
           </div>
         </div>
