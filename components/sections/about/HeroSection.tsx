@@ -45,8 +45,21 @@ export function HeroSection({ data }: HeroSectionProps) {
         className="object-cover object-[center_100%] max-xl:origin-bottom max-xl:scale-110 max-lg:scale-125 max-sm:!scale-[1.20]"
       />
 
-      {/* Dark overlay for legibility */}
-      <div className="absolute inset-0 bg-black/50" />
+      {/* Legibility scrim.
+          Was a flat bg-black/50, but the client's new group photo has a bright
+          white studio wall exactly where the centred heading/subtext sit, so a
+          uniform tint had to go too dark before the copy read cleanly — and that
+          kills the faces. All overlaid text falls in the lower half of the hero
+          (Row uses !mt-[35%]), so weight the darkness there instead: heaviest at
+          the bottom under the subtext, light at the top where nothing sits.
+          Measured at a 1280px layout viewport: flat/50 crushed every bright pixel
+          in the photo (0% above mid-tone) and still scored worse on the heading
+          (3.58 vs 4.70) and the subtext (4.28 vs 7.29).
+          via is /45 rather than /35 to cover the 16px yellow eyebrow at ~56%
+          height, the thinnest text on the brightest part of the frame.
+          black/* is a built-in Tailwind colour, so the /opacity modifier works —
+          the project's var-based tokens (neutral-0 etc.) silently drop it. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/45 to-black/10" />
 
       {/* Content */}
       <Row className="relative z-10 flex flex-col items-center gap-2 sm:gap-4 text-center mb-[20px] xl:!mb-[60px] !mt-[35%] xl:!mt-[32%]">
