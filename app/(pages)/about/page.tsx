@@ -1,6 +1,6 @@
 import Header from '@/components/layout/Header'
 import { HeroSection } from '@/components/sections/about/HeroSection'
-import { VideoListSection } from '@/components/sections/about/VideoListSection'
+import { VideoSection } from '@/components/sections/about/VideoSection'
 import { MediaTextSection } from '@/components/shared/MediaTextSection'
 import { MissionVisionSection } from '@/components/sections/about/MissionVisionSection'
 import { WhyWeExistSection } from '@/components/sections/about/WhyWeExistSection'
@@ -55,8 +55,8 @@ export default async function AboutPage() {
         buttonLink="/contact"
       />
 
-      {/* Video List Section */}
-      <VideoListSection data={dc?.videoListSection} />
+      {/* Full-width Video Section */}
+      <VideoSection data={dc?.fullwidthVideoSection} />
 
       {/* Mission & Vision Section */}
       <MissionVisionSection

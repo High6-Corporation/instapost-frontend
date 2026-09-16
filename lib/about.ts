@@ -32,11 +32,20 @@ export interface AboutIntroductionSection {
   introductionImage: MediaField | null
 }
 
-export interface AboutVideoListItem {
-  video: {
-    node: {
-      guid: string
-    }
+/**
+ * Full-width video — ACF File field `fullwidth_video_section` (Return Value: File Array),
+ * exposed by WPGraphQL as AcfMediaItemConnectionEdge → node: MediaItem.
+ *
+ * Why both URLs and not sourceUrl:
+ *  - `sourceUrl` returns null for video attachments (verified live).
+ *  - `mediaItemUrl` tracks the *current* site domain → preferred.
+ *  - `guid` is frozen at upload time and still points at the old
+ *    instapost.beta01.site domain → fallback only.
+ */
+export interface AboutFullwidthVideoSection {
+  node: {
+    mediaItemUrl: string | null
+    guid: string | null
   } | null
 }
 
@@ -127,7 +136,7 @@ export interface AboutCtaSection {
 export interface AboutDynamicContent {
   heroSection: AboutHeroSection
   introductionSection: AboutIntroductionSection
-  videoListSection: AboutVideoListItem[]
+  fullwidthVideoSection: AboutFullwidthVideoSection
   missionAndVisionSection: AboutMissionVisionSection
   whyWeExistSection: AboutWhyWeExistSection
   ourPromiseSection: AboutOurPromiseSection
@@ -145,8 +154,11 @@ export interface AboutPageData {
 
 // ── Persisted Query ID ───────────────────────────────────────────────────────
 
+// SHA-256 of the saved `GetAboutPage` query in WPGraphQL → Saved GraphQL Queries.
+// Re-save the query in WP admin and update this ID whenever the document changes;
+// a stale ID fails the whole fetch and silently reverts every section to fallback copy.
 const ABOUT_PAGE_QUERY_ID =
-  '8a1ba5c786b12e184c76f8da62eabf3fa9f1863d4c2bf178754d45afd6b18ad4'
+  '6bb042bb891a22ffd0632f2a2d3f824202695f4b9c9c28476ad43c9c875f0c38'
 
 // ── Fetch ────────────────────────────────────────────────────────────────────
 
