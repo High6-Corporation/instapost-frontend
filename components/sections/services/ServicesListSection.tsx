@@ -228,7 +228,7 @@ export function ServicesListSection({ data }: ServicesListSectionProps) {
 
                     <a
                       href={offer.linkHref}
-                      className="body-sm mt-6 inline-flex items-center gap-2 font-semibold text-primary"
+                      className="body-sm mt-6 inline-flex items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline"
                     >
                       {offer.linkLabel}
                       <span aria-hidden>→</span>
