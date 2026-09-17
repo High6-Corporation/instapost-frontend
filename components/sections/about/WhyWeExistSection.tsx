@@ -30,13 +30,10 @@ export function WhyWeExistSection({ data }: WhyWeExistSectionProps) {
     <Section className="bg-bg-secondary py-[60px] md:py-[80px] lg:py-[100px]">
       <Row>
         <div className="flex max-w-[1197px] flex-col gap-6 mx-auto max-md:text-center">
-          {/* Eyebrow / pre-header */}
-          <div className="flex items-center gap-3 max-md:w-fit max-md:mx-auto">
-            <span className="h-px w-8 bg-text-primary" />
-            <span className="body-sm font-semibold uppercase tracking-[0.15em] text-text-primary">
-              {preHeader}
-            </span>
-          </div>
+          {/* Eyebrow / pre-header — same caption treatment as the About hero eyebrow (HeroSection) */}
+          <p className="caption w-full uppercase tracking-[2px] text-primary max-md:text-center">
+            {preHeader}
+          </p>
 
           {/* Main heading */}
           <h2 className="heading-2 font-medium text-text-primary">{heading}</h2>

@@ -62,9 +62,9 @@ export function HeroSection({ data }: HeroSectionProps) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/45 to-black/10" />
 
       {/* Content */}
-      <Row className="relative z-10 flex flex-col items-center gap-2 sm:gap-4 text-center mb-[20px] xl:!mb-[60px] !mt-[35%] xl:!mt-[32%]">
+      <Row className="relative z-10 flex flex-col items-center text-center mb-[20px] xl:!mb-[60px] !mt-[35%] xl:!mt-[32%]">
         {/* Eyebrow */}
-        <p className="body-sm !font-normal tracking-wide text-secondary">
+        <p className="caption w-full text-center uppercase tracking-[2px] text-secondary">
           {eyebrow}
         </p>
 
@@ -75,7 +75,7 @@ export function HeroSection({ data }: HeroSectionProps) {
         />
 
         {/* Subtext */}
-        <p className="body-md mx-auto max-w-[900px] text-neutral-0">{subtext}</p>
+        <p className="body-md mx-auto max-w-[900px] mt-6 text-neutral-0">{subtext}</p>
       </Row>
     </Section>
   )

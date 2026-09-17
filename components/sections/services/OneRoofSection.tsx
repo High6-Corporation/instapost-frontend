@@ -3,30 +3,40 @@ import Row from '@/components/layout/Row'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import ScrollAnimationWrapper from '@/components/global/ScrollAnimationWrapper'
-import type { AboutEmpoweringSection } from '@/lib/about'
 
 // Fallback content (mirrors the reference copy) — used only until the CMS fields are filled.
-const FALLBACK_PREHEADER = 'Where this is going'
-const FALLBACK_HEADING = 'Empowering <strong>10,000 legacy brands</strong> by 2035.'
+const FALLBACK_PREHEADER = 'One roof, one invoice'
+const FALLBACK_HEADING = 'These five work best as one retainer.'
 const FALLBACK_SUBTEXT =
-  'That’s the mission on our wall: help the brands Filipinos grew up with — and the ones they’re building now — thrive in the digital age. Starting at home in the Philippines, and following Filipino brands wherever in the world they grow next.'
-const FALLBACK_LINK_TEXT = 'We’re hiring — join the team'
+  'Every package bundles the system — from Essentials at ₱60,000/month to the revenue-accountable Performance Package. Fixed prices, no surprise line items.'
+const FALLBACK_LINK_TEXT = 'See packages & rates'
 
-// Same gold radial as the "What we stand" section, but painted full-bleed on the section.
+// Same gold radial as the About "Empowering" section, painted full-bleed on the section.
 const GOLD_GRADIENT =
   'radial-gradient(circle at 50% 30%, rgba(253, 209, 13, 0.15) 0%, rgba(253, 209, 13, 1) 100%)'
 
-interface EmpoweringSectionProps {
-  data?: AboutEmpoweringSection | null
+interface RedirectionLink {
+  url: string
+  title: string
+  target: string
 }
 
-export function EmpoweringSection({ data }: EmpoweringSectionProps) {
+interface OneRoofSectionProps {
+  data?: {
+    preHeader?: string | null
+    mainHeading?: string | null
+    subtext?: string | null
+    redirectionLink?: RedirectionLink | null
+  } | null
+}
+
+export function OneRoofSection({ data }: OneRoofSectionProps) {
   const preHeader = data?.preHeader || FALLBACK_PREHEADER
   const heading = data?.mainHeading || FALLBACK_HEADING
   const subtext = data?.subtext || FALLBACK_SUBTEXT
 
   const link = data?.redirectionLink
-  const href = link?.url || '/contact'
+  const href = link?.url || '/packages'
   const linkText = link?.title || FALLBACK_LINK_TEXT
   const isExternal = link?.target === '_blank'
 
@@ -71,4 +81,4 @@ export function EmpoweringSection({ data }: EmpoweringSectionProps) {
   )
 }
 
-export default EmpoweringSection
+export default OneRoofSection
