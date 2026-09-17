@@ -1,6 +1,7 @@
 import Section from '@/components/layout/Section'
 import Row from '@/components/layout/Row'
 import ScrollAnimationWrapper from '@/components/global/ScrollAnimationWrapper'
+import { CountUp } from '@/components/ui/CountUp'
 
 // One "From the Archive" stat card shown on the right of each offer block.
 export interface OfferArchive {
@@ -218,7 +219,7 @@ export function ServicesListSection({ data }: ServicesListSectionProps) {
                         >
                           <p className="caption uppercase tracking-[1px] text-primary">{card.eyebrow}</p>
                           <p className="heading-2 mt-2 flex flex-wrap items-baseline gap-x-1 font-bold text-primary">
-                            {card.value}
+                            <CountUp value={card.value} />
                             <span className="body-md font-semibold text-text-primary">{card.suffix}</span>
                           </p>
                           <p className="body-sm mt-2 text-text-secondary">{card.description}</p>

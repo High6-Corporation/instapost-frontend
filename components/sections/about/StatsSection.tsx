@@ -1,6 +1,7 @@
 import Section from '@/components/layout/Section'
 import Row from '@/components/layout/Row'
 import ScrollAnimationWrapper from '@/components/global/ScrollAnimationWrapper'
+import { CountUp } from '@/components/ui/CountUp'
 import type { AboutStatsSection } from '@/lib/about'
 
 // Fallback content (mirrors the reference copy) — used only until the CMS fields are filled.
@@ -27,7 +28,7 @@ export function StatsSection({ data }: StatsSectionProps) {
             {stats.map((stat, index) => (
               <div key={index} className="flex flex-col gap-2">
                 <span className="heading-1 text-primary max-lg:text-center font-semibold leading-none">
-                  {stat.statValue}
+                  <CountUp value={stat.statValue} />
                 </span>
                 <span className="body-xs max-lg:text-center font-semibold uppercase tracking-[0.15em] text-text-secondary">
                   {stat.subtext}

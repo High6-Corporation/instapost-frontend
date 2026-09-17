@@ -1,6 +1,7 @@
 import Section from '@/components/layout/Section'
 import Row from '@/components/layout/Row'
 import ScrollAnimationWrapper from '@/components/global/ScrollAnimationWrapper'
+import { CountUp } from '@/components/ui/CountUp'
 
 // Fallback content
 const FALLBACK_HEADING = 'Proof, not promises'
@@ -116,7 +117,7 @@ export function ProofSection({ data, clients }: ProofSectionProps) {
                 {/* Metric */}
                 <div className="flex items-baseline mb-[16px]">
                   <span className="heading-2 font-bold text-secondary">
-                    {card.metric}
+                    <CountUp value={card.metric} />
                   </span>
                 </div>
 

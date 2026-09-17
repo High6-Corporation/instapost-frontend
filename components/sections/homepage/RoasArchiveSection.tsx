@@ -1,5 +1,6 @@
 import Section from '@/components/layout/Section'
 import Row from '@/components/layout/Row'
+import { CountUp } from '@/components/ui/CountUp'
 
 // Fallback content
 const FALLBACK_MAIN_HEADING = 'From the ROAS Archive'
@@ -121,7 +122,7 @@ export function RoasArchiveSection({ data, clients }: RoasArchiveProps) {
                 {/* Right: Metric + label */}
                 <div className="flex flex-col items-end gap-1">
                   <span className="heading-2 font-bold text-primary">
-                    {result.metric}
+                    <CountUp value={result.metric} />
                   </span>
                   <span className="caption tracking-[1px] text-text-primary uppercase">
                     {result.label}

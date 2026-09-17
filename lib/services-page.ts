@@ -7,7 +7,7 @@ import type { OfferArchive, ServiceOffer } from '@/components/sections/services/
 // Re-save the query in WP admin and update this ID whenever the document changes;
 // a stale ID fails the whole fetch and silently reverts every section to fallback copy.
 const SERVICES_PAGE_QUERY_ID =
-  '3724103fb54ee58e79d4d7b18fabf0179b65b994fdbc23b5e58589175398f292'
+  '8f1fc52f098883b20b31b2c55a32a623a54022b300d22394e49ccf501fd0c99b'
 
 // ── Raw CMS shapes (mirrors the GetServicesPage persisted query) ─────────────
 
@@ -58,7 +58,8 @@ interface CmsOneRoofSection {
   preHeader: string | null
   mainHeading: string | null
   subtext: string | null
-  redirectionLink: CmsLink | null
+  // NOTE: the query no longer selects redirectionLink (removed from the saved
+  // query in WP) — the One Roof button stays static (/packages fallback).
 }
 
 interface CmsCtaSection {
@@ -229,18 +230,13 @@ function buildStandards(rows: CmsStandardItem[] | null) {
 }
 
 function buildOneRoof(s: CmsOneRoofSection | null) {
-  if (!s || (!hasText(s.preHeader) && !hasText(s.mainHeading) && !hasText(s.subtext) && !s.redirectionLink)) {
+  if (!s || (!hasText(s.preHeader) && !hasText(s.mainHeading) && !hasText(s.subtext))) {
     return null
   }
-  const link = s.redirectionLink
   return {
     preHeader: s.preHeader,
     mainHeading: s.mainHeading,
     subtext: s.subtext,
-    redirectionLink:
-      link && (hasText(link.url) || hasText(link.title))
-        ? { url: (link.url ?? '').trim(), title: (link.title ?? '').trim(), target: (link.target ?? '').trim() }
-        : null,
   }
 }
 
