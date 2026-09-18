@@ -11,12 +11,6 @@ const SERVICES_PAGE_QUERY_ID =
 
 // ── Raw CMS shapes (mirrors the GetServicesPage persisted query) ─────────────
 
-interface CmsLink {
-  url: string | null
-  title: string | null
-  target: string | null
-}
-
 interface CmsHeroSection {
   preHeader: string | null
   mainHeading: string | null
