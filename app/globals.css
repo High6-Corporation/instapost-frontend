@@ -269,6 +269,19 @@
   transform: translateY(0);
 }
 
+/* ReceiptTapeSection — the client-result chips strip. Static while the chips
+   fit the row; overflow-x-auto only engages on narrow screens (or a long
+   client list), where it is dragged/swiped. The scrollbar is hidden so the
+   strip reads as one band, matching the homepage sliders. */
+.tape-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tape-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* MarketingSection Philosophy Steps */
 .philosophy-step {
   position: relative;

@@ -5,10 +5,14 @@ import { CtaSection } from "@/components/global/CtaSection";
 import { IntroText } from "@/components/sections/packages/IntroText";
 import { PackagesMain, PackageItem } from '@/components/sections/packages/PackagesMain'
 import { ProcessStepsSection, ProcessStep } from '@/components/sections/packages/ProcessStepsSection'
-import { AddOnsSection } from '@/components/sections/packages/AddOnsSection'
+import { LegacyAddOnsSection } from '@/components/sections/packages/LegacyAddOnsSection'
 import type { Metadata } from 'next'
 import { getPageSEO } from '@/lib/seo'
 
+// Packages page — the ORIGINAL (public) design. Kept on the live /packages URL
+// so client viewing is unaffected while the redesigned catalog is trialled at
+// /packages-1. The redesign replaced AddOnsSection in place, so this route uses
+// the revived LegacyAddOnsSection snapshot instead.
 export async function generateMetadata(): Promise<Metadata> {
   const pageSEO = await getPageSEO('packages')
   if (!pageSEO?.seo) return {}
@@ -309,7 +313,7 @@ export default function PackagesPage() {
           title="Optional Add-Ons"
           description="Enhance your campaign with premium creative services designed to boost engagement, elevate your brand, and drive measurable results."
         />
-        <AddOnsSection />
+        <LegacyAddOnsSection />
 
         {/* ── Onboarding Journey ── */}
         <IntroText
@@ -328,4 +332,3 @@ export default function PackagesPage() {
     </>
   );
 }
-

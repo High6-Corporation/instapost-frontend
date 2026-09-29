@@ -7,6 +7,9 @@ import { AgencyPageClient } from "@/components/sections/agency/AgencyPageClient"
 import type { Metadata } from 'next'
 import { getPageSEO } from '@/lib/seo'
 
+// Agency page — the ORIGINAL (public) design: the per-package card stack.
+// Kept on the live /agency URL so client viewing is unaffected while the
+// "Full Catalog" redesign is trialled at /agency-1.
 export async function generateMetadata(): Promise<Metadata> {
   const pageSEO = await getPageSEO('agency')
   if (!pageSEO?.seo) return {}
