@@ -342,3 +342,10 @@
 .quote-modal-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.35);
 }
+
+/* Native form controls (range sliders, checkboxes) in brand red.
+   Tailwind's accent-* scale cannot derive a tint from the hex-var design
+   tokens, so the accent colour is declared directly. */
+.accent-brand {
+  accent-color: var(--color-primary);
+}

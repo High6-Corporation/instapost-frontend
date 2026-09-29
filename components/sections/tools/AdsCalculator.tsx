@@ -1,172 +1,147 @@
 'use client'
 
 import { useState } from 'react'
-import Section from '@/components/layout/Section'
-import Row from '@/components/layout/Row'
-import Button from '@/components/ui/Button'
-import Link from 'next/link'
+import { CalculatorShell } from './CalculatorShell'
+import { SliderControl } from './SliderControl'
+import { SelectControl } from './SelectControl'
+import { ToolResultCard, type ResultTile } from './ToolResultCard'
 import {
-  ADS_FEE_TIERS,
-  EXPECTED_ROAS,
+  ADS_DEFAULT_INPUTS,
+  ADS_SLIDER_RANGE,
+  INDUSTRIES,
+  PLATFORM_MIXES,
   estimateAdsBudget,
   formatPeso,
   type AdsInputs,
 } from '@/lib/tools'
+import type { ToolSidebarContent } from '@/lib/tools'
 
-interface AdsField {
-  key: keyof AdsInputs
-  label: string
-  placeholder: string
-  help: string
-}
+const INDUSTRY_OPTIONS = INDUSTRIES.map((industry) => ({
+  value: industry.value,
+  label: industry.label,
+}))
 
-const ADS_FIELDS: AdsField[] = [
-  {
-    key: 'currentRevenue',
-    label: 'Current monthly revenue',
-    placeholder: 'e.g. 150000',
-    help: 'Your average monthly sales across all channels.',
-  },
-  {
-    key: 'growthTarget',
-    label: 'Extra revenue you want each month',
-    placeholder: 'e.g. 90000',
-    help: 'The additional monthly sales you want ads to bring in.',
-  },
-  {
-    key: 'avgOrderValue',
-    label: 'Average order or deal value',
-    placeholder: 'e.g. 1500',
-    help: 'How much one customer typically spends with you.',
-  },
-]
+const PLATFORM_OPTIONS = PLATFORM_MIXES.map((platform) => ({
+  value: platform.value,
+  label: platform.label,
+}))
 
-const INITIAL_INPUTS: AdsInputs = { currentRevenue: 0, growthTarget: 0, avgOrderValue: 0 }
+const percent = (value: number) => `${value}%`
 
-function parseAmount(raw: string): number {
-  const parsed = Number(raw.replace(/[^0-9.]/g, ''))
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0
+interface AdsCalculatorProps {
+  data?: ToolSidebarContent | null
 }
 
 /**
- * Ads pricing tool: suggests a monthly ad budget from the growth target
- * (budget = extra revenue ÷ expected ROAS) and maps it to InstaPost's ads
- * management fee tiers. Formula constants live in lib/tools.ts.
+ * Ads budget tool rebuilt on the reference tool's interaction: three sliders and
+ * two dropdowns that recompute a cost-per-lead estimate on every change, shown
+ * live in the dark estimate panel. All rates and the InstaPost management tier
+ * mapping live in lib/tools.ts so the client can retune them without touching
+ * this component.
  */
-export function AdsCalculator() {
-  const [inputs, setInputs] = useState<AdsInputs>(INITIAL_INPUTS)
-  const [estimated, setEstimated] = useState(false)
+export function AdsCalculator({ data }: AdsCalculatorProps) {
+  const [inputs, setInputs] = useState<AdsInputs>(ADS_DEFAULT_INPUTS)
 
-  const growthTarget = parseAmount(String(inputs.growthTarget))
-  const avgOrderValue = parseAmount(String(inputs.avgOrderValue))
-  const canEstimate = growthTarget > 0 && avgOrderValue > 0
-  const estimate = canEstimate ? estimateAdsBudget(inputs) : null
+  const setField = <K extends keyof AdsInputs>(key: K, value: AdsInputs[K]) =>
+    setInputs((prev) => ({ ...prev, [key]: value }))
 
-  const handleFieldChange = (key: keyof AdsInputs, raw: string) => {
-    setInputs((prev) => ({ ...prev, [key]: parseAmount(raw) }))
-    setEstimated(false)
-  }
+  const estimate = estimateAdsBudget(inputs)
+
+  const tiles: ResultTile[] = [
+    {
+      value: estimate.leadsNeeded.toLocaleString('en-PH'),
+      label: 'Leads needed / month',
+      detail: `at ${inputs.closeRate}% close rate`,
+    },
+    {
+      value: formatPeso(estimate.minAdSpend),
+      label: 'Min ad spend',
+      detail: 'conservative',
+    },
+    {
+      value: formatPeso(estimate.maxAdSpend),
+      label: 'Max ad spend',
+      detail: 'aggressive',
+    },
+    {
+      value: `${estimate.roas.toFixed(1)}x`,
+      label: 'Est. ROAS',
+      detail: 'return on ad spend',
+    },
+  ]
+
+  const feeNote = estimate.tier
+    ? `InstaPost ads management for a ${formatPeso(estimate.tier.adBudget)} monthly budget is ${formatPeso(estimate.tier.managementFee)} per month, billed separately from ad spend.`
+    : 'Your suggested budget is beyond our published tiers (₱10,000 / ₱20,000 / ₱30,000), so ads management is quoted custom — tell us your budget when you inquire.'
+
+  const footnote = `Estimated cost per lead for this industry: ${formatPeso(estimate.cpl)}. ${feeNote} The ROAS figure is deliberately conservative — it prices every lead at the full benchmark cost per lead, before any optimisation brings it down.`
 
   return (
-    <Section className="bg-bg-secondary py-[60px] md:py-[80px]">
-      <Row>
-        <div className="mx-auto flex w-full max-w-[820px] flex-col gap-8 rounded-2xl bg-white p-6 shadow-[0px_0px_14px_rgba(0,0,0,0.10)] md:p-10">
-          <div className="flex flex-col gap-6">
-            {ADS_FIELDS.map((field) => (
-              <label key={field.key} className="flex flex-col gap-2">
-                <span className="body-md font-semibold text-text-primary">{field.label}</span>
-                <span className="relative">
-                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 body-md text-text-secondary">
-                    ₱
-                  </span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={inputs[field.key] || ''}
-                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    placeholder={field.placeholder}
-                    className="w-full rounded-xl border border-neutral-200 bg-white py-3 pl-9 pr-4 body-md text-text-primary placeholder:text-neutral-500 focus:border-primary focus:outline-none"
-                  />
-                </span>
-                <span className="caption text-text-secondary">{field.help}</span>
-              </label>
-            ))}
-          </div>
+    <CalculatorShell
+      data={data}
+      currentToolHref="/tools/ads-pricing"
+      aboutBody="This calculator back-calculates your required ad budget from real Metro Manila cost-per-lead benchmarks across six industries. Enter the revenue you want, how much a customer spends, and how often you close leads — the tool returns the lead volume, spend range and return on ad spend behind that target, plus the InstaPost management tier that covers it."
+    >
+      <div className="flex flex-col gap-2">
+        <p className="caption font-semibold uppercase tracking-[2px] text-primary">
+          Adjust the inputs — results update instantly
+        </p>
+        <h2 className="heading-3 font-medium text-text-primary">Plan your monthly ad budget</h2>
+      </div>
 
-          <Button
-            onClick={() => setEstimated(true)}
-            disabled={!canEstimate}
-            className={!canEstimate ? 'pointer-events-none opacity-50' : ''}
-          >
-            Calculate My Ad Budget
-          </Button>
+      <SliderControl
+        label="Monthly revenue target"
+        value={inputs.revenueTarget}
+        min={ADS_SLIDER_RANGE.revenueTarget.min}
+        max={ADS_SLIDER_RANGE.revenueTarget.max}
+        step={ADS_SLIDER_RANGE.revenueTarget.step}
+        onChange={(value) => setField('revenueTarget', value)}
+      />
 
-          {estimated && estimate && (
-            <div className="flex flex-col items-start gap-5 rounded-2xl bg-bg-secondary p-6 md:p-8">
-              <p className="caption uppercase tracking-[1px] text-primary">Your estimate</p>
-              <h3 className="heading-3 font-medium text-text-primary">
-                {formatPeso(estimate.suggestedBudget)}
-                {estimate.suggestedBudgetMax > estimate.suggestedBudget && (
-                  <> – {formatPeso(estimate.suggestedBudgetMax)}</>
-                )}{' '}
-                per month in ad spend
-              </h3>
-              <p className="body-md leading-relaxed text-text-secondary">
-                To add about {formatPeso(inputs.growthTarget)} in monthly revenue at a conservative{' '}
-                {EXPECTED_ROAS}x return on ad spend, plan a monthly ad budget of{' '}
-                {formatPeso(estimate.suggestedBudget)}
-                {estimate.suggestedBudgetMax > estimate.suggestedBudget
-                  ? ` to ${formatPeso(estimate.suggestedBudgetMax)}`
-                  : ''}
-                . That is roughly {estimate.estimatedExtraOrders.toLocaleString('en-PH')} extra
-                orders a month at your average order value.
-              </p>
+      <SliderControl
+        label="Average order / deal value"
+        value={inputs.avgOrderValue}
+        min={ADS_SLIDER_RANGE.avgOrderValue.min}
+        max={ADS_SLIDER_RANGE.avgOrderValue.max}
+        step={ADS_SLIDER_RANGE.avgOrderValue.step}
+        onChange={(value) => setField('avgOrderValue', value)}
+      />
 
-              <div className="flex w-full flex-col gap-3">
-                <p className="label-md font-semibold uppercase tracking-[1px] text-text-primary">
-                  InstaPost ads management fee
-                </p>
-                {estimate.tier ? (
-                  <p className="body-md leading-relaxed text-text-secondary">
-                    {formatPeso(estimate.tier.managementFee)} per month to manage your{' '}
-                    {formatPeso(estimate.tier.adBudget)} ad budget — includes optimizations,
-                    targeting protocol, pixel integration support and monthly reporting. Ad spend
-                    itself is client-funded.
-                  </p>
-                ) : (
-                  <p className="body-md leading-relaxed text-text-secondary">
-                    Your suggested budget is beyond our standard tiers ({ADS_FEE_TIERS.map((t) => formatPeso(t.adBudget)).join(', ')}),
-                    so management is quoted custom — tell us your budget in your inquiry and
-                    we will match it.
-                  </p>
-                )}
-              </div>
+      <SliderControl
+        label="Lead-to-client close rate"
+        value={inputs.closeRate}
+        min={ADS_SLIDER_RANGE.closeRate.min}
+        max={ADS_SLIDER_RANGE.closeRate.max}
+        step={ADS_SLIDER_RANGE.closeRate.step}
+        format={percent}
+        onChange={(value) => setField('closeRate', value)}
+      />
 
-              <p className="caption leading-relaxed text-text-secondary">
-                Estimates assume a {EXPECTED_ROAS}x ROAS typical of Philippine Meta and Google
-                campaigns and are not a guarantee of results.
-              </p>
-            </div>
-          )}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <SelectControl
+          label="Industry"
+          value={inputs.industry}
+          options={INDUSTRY_OPTIONS}
+          onChange={(value) => setField('industry', value)}
+        />
+        <SelectControl
+          label="Ad platform mix"
+          value={inputs.platformMix}
+          options={PLATFORM_OPTIONS}
+          onChange={(value) => setField('platformMix', value)}
+        />
+      </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <Button
-              variant="secondary"
-              showArrow={false}
-              onClick={() => {
-                setInputs(INITIAL_INPUTS)
-                setEstimated(false)
-              }}
-            >
-              Reset
-            </Button>
-            <Link href="/contact">
-              <Button>Inquire Now</Button>
-            </Link>
-          </div>
-        </div>
-      </Row>
-    </Section>
+      <ToolResultCard tiles={tiles} footnote={footnote} />
+
+      <button
+        type="button"
+        onClick={() => setInputs(ADS_DEFAULT_INPUTS)}
+        className="self-start caption font-semibold uppercase tracking-[1px] text-text-secondary underline transition-colors duration-200 hover:text-primary"
+      >
+        Reset to defaults
+      </button>
+    </CalculatorShell>
   )
 }
 

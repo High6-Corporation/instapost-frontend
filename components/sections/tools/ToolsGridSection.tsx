@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 interface ToolCard {
+  category: string
   title: string
   description: string
   cta: string
@@ -14,17 +15,19 @@ interface ToolCard {
 
 const TOOL_CARDS: ToolCard[] = [
   {
+    category: 'Social Media Tool',
     title: 'Social Media Pricing Tool',
     description:
-      'Answer a few quick questions about your business and get an instant recommendation for the right InstaPost SMM package.',
+      'Set your tier, platforms, posting frequency and add-ons to see an instant monthly management fee, matched to InstaPost’s published packages.',
     cta: 'Get My SMM Estimate',
     href: '/tools/smm-pricing',
     imageSrc: '/images/momentum.jpg',
   },
   {
+    category: 'Paid Ads Tool',
     title: 'Ads Budget Calculator',
     description:
-      'Tell us your revenue goals and we will suggest a monthly ad budget and the matching InstaPost ads management fee.',
+      'Slide to your revenue target and get the lead volume, ad spend range and matching InstaPost ads management fee behind it — updating live.',
     cta: 'Calculate My Ad Budget',
     href: '/tools/ads-pricing',
     imageSrc: '/images/ads-manager.jpg',
@@ -58,6 +61,9 @@ function ToolsGridSection() {
                   />
                 </div>
                 <div className="flex flex-1 flex-col items-start gap-3 p-7">
+                  <span className="rounded-full bg-bg-secondary px-3 py-1 caption font-semibold uppercase tracking-[1px] text-primary">
+                    {card.category}
+                  </span>
                   <h3 className="heading-3 font-medium text-text-primary">{card.title}</h3>
                   <p className="body-md leading-relaxed text-text-secondary">{card.description}</p>
                   <span className="mt-auto pt-4 label-md font-semibold uppercase tracking-[1px] text-primary">

@@ -1,184 +1,155 @@
 'use client'
 
 import { useState } from 'react'
-import Section from '@/components/layout/Section'
-import Row from '@/components/layout/Row'
-import Button from '@/components/ui/Button'
-import Link from 'next/link'
-import { ToolOptionGroup, type ToolOption } from './ToolOptionGroup'
+import { CalculatorShell } from './CalculatorShell'
+import { SliderControl } from './SliderControl'
+import { SelectControl } from './SelectControl'
+import { CheckboxGroup } from './CheckboxGroup'
+import { ToolResultCard, type ResultTile } from './ToolResultCard'
 import {
+  SMM_ADD_ONS,
+  SMM_DEFAULT_INPUTS,
+  SMM_SLIDER_RANGE,
+  SMM_TIERS,
+  estimateSmmPricing,
+  formatCountCompact,
   formatPeso,
-  recommendSmmPackage,
-  getSmmPackage,
-  type SmmAnswerKey,
+  type SmmAddOnKey,
+  type SmmInputs,
 } from '@/lib/tools'
+import type { ToolSidebarContent } from '@/lib/tools'
 
-type SmmAnswers = Partial<Record<SmmAnswerKey, string>>
+const TIER_OPTIONS = SMM_TIERS.map((tier) => ({ value: tier.value, label: tier.label }))
 
-interface SmmStep {
-  key: SmmAnswerKey
-  question: string
-  options: ToolOption[]
+const count = (value: number) => String(value)
+
+interface SmmCalculatorProps {
+  data?: ToolSidebarContent | null
 }
 
-const SMM_STEPS: SmmStep[] = [
-  {
-    key: 'stage',
-    question: 'What stage is your business at?',
-    options: [
-      { value: 'new', label: 'Just starting out', description: 'New brand, building our first audience' },
-      { value: 'growing', label: 'Growing', description: 'Consistent customers, want more reach' },
-      { value: 'established', label: 'Established', description: 'Well-known brand, pushing performance' },
-    ],
-  },
-  {
-    key: 'frequency',
-    question: 'How often do you want to post?',
-    options: [
-      { value: 'few', label: 'A few posts a week', description: 'Stay visible with essential content' },
-      { value: 'weekly', label: 'Every week, consistently', description: 'A full calendar of posts, carousels and stories' },
-      { value: 'daily', label: 'Daily or more', description: 'High-volume content across formats' },
-    ],
-  },
-  {
-    key: 'shoot',
-    question: 'Do you need professional photo/video content?',
-    options: [
-      { value: 'provide', label: 'I will provide my own materials' },
-      { value: 'yes', label: 'Yes, shoot content for me', description: 'Studio shoot with edited photos and raw clips' },
-    ],
-  },
-  {
-    key: 'influencers',
-    question: 'Do you want micro-influencer posts?',
-    options: [
-      { value: 'no', label: 'Not for now' },
-      { value: 'yes', label: 'Yes', description: 'Influencers posting on FB/IG with usage rights' },
-    ],
-  },
-  {
-    key: 'adBudget',
-    question: 'How much will you spend on ads each month?',
-    options: [
-      { value: 'none', label: 'No ads yet' },
-      { value: 'tenK', label: 'Around ₱10,000' },
-      { value: 'twentyK', label: 'Around ₱20,000' },
-      { value: 'thirtyK', label: '₱30,000 or more' },
-    ],
-  },
-]
-
 /**
- * SMM pricing tool: a step wizard that scores the answers and recommends a
- * Launch / Momentum / Scale package. Scoring weights and package data live in
- * lib/tools.ts so the logic can be re-tuned (or CMS-wired) without touching
- * this component.
+ * Social media pricing tool rebuilt on the reference tool's interaction: one
+ * screen of sliders, a tier dropdown and stackable add-on checkboxes that
+ * recompute the monthly fee live. Base rates, per-unit rates and add-on prices
+ * are isolated in lib/tools.ts.
  */
-export function SmmCalculator() {
-  const [stepIndex, setStepIndex] = useState(0)
-  const [answers, setAnswers] = useState<SmmAnswers>({})
+export function SmmCalculator({ data }: SmmCalculatorProps) {
+  const [inputs, setInputs] = useState<SmmInputs>(SMM_DEFAULT_INPUTS)
 
-  const isResult = stepIndex >= SMM_STEPS.length
-  const totalSteps = SMM_STEPS.length + 1 // + result step
-  const currentStep = isResult ? SMM_STEPS.length : stepIndex
-  const step = isResult ? null : SMM_STEPS[stepIndex]
-  const selectedValue = step ? answers[step.key] : undefined
+  const setField = <K extends keyof SmmInputs>(key: K, value: SmmInputs[K]) =>
+    setInputs((prev) => ({ ...prev, [key]: value }))
 
-  const handleSelect = (key: SmmAnswerKey, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value }))
+  const toggleAddOn = (value: string, checked: boolean) => {
+    const key = value as SmmAddOnKey
+    setInputs((prev) => ({
+      ...prev,
+      addOns: checked ? [...prev.addOns, key] : prev.addOns.filter((item) => item !== key),
+    }))
   }
 
-  const reset = () => {
-    setAnswers({})
-    setStepIndex(0)
-  }
+  const estimate = estimateSmmPricing(inputs)
+  const hasAds = inputs.addOns.includes('ads')
 
-  const recommendation = isResult ? getSmmPackage(recommendSmmPackage(answers)) : null
+  const tiles: ResultTile[] = [
+    {
+      value: formatPeso(estimate.managementFee),
+      label: 'Management fee',
+      detail: 'per month',
+    },
+    {
+      value: formatPeso(estimate.totalMonthly),
+      label: 'Total monthly investment',
+      detail: hasAds ? 'including ad spend' : 'management only',
+    },
+    {
+      value: formatCountCompact(estimate.monthlyReach),
+      label: 'Est. monthly reach',
+      detail: hasAds ? 'organic + paid' : 'organic',
+    },
+    {
+      value: String(estimate.contentPieces),
+      label: 'Content pieces / month',
+      detail: `across ${inputs.platforms} platform${inputs.platforms > 1 ? 's' : ''}`,
+    },
+  ]
+
+  const adsNote = hasAds
+    ? `Ads management is included for up to a ${formatPeso(estimate.pkg.includedAdBudget)} monthly ad budget in the ${estimate.pkg.name} package; beyond that it is added at 15% of ad spend. Ad spend itself is client-funded.`
+    : `The ${estimate.pkg.name} package already covers ads management up to a ${formatPeso(estimate.pkg.includedAdBudget)} monthly ad budget — tick the ads add-on to price it in. Ad spend itself is client-funded.`
+
+  const footnote = `Closest published package: ${estimate.pkg.name} — ${estimate.pkg.tagline}. ${adsNote} Final pricing is confirmed in your strategy session.`
 
   return (
-    <Section className="bg-bg-secondary py-[60px] md:py-[80px]">
-      <Row>
-        <div className="mx-auto flex w-full max-w-[820px] flex-col gap-8 rounded-2xl bg-white p-6 shadow-[0px_0px_14px_rgba(0,0,0,0.10)] md:p-10">
-          {/* Progress */}
-          <div className="flex flex-col gap-2">
-            <p className="caption uppercase tracking-[1px] text-text-secondary">
-              Step {currentStep + 1} of {totalSteps}
-            </p>
-            <div className="h-1.5 w-full rounded-full bg-neutral-100">
-              <div
-                className="h-1.5 rounded-full bg-primary transition-all duration-300"
-                style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-              />
-            </div>
-          </div>
+    <CalculatorShell
+      data={data}
+      currentToolHref="/tools/smm-pricing"
+      aboutBody="This calculator builds your monthly social media management fee the way we scope it: a package base rate, plus a rate per platform and per weekly post, plus whichever add-ons you actually need. Move the sliders and tick the add-ons — the estimate updates as you go, so you can see exactly what each extra costs before you talk to us."
+    >
+      <div className="flex flex-col gap-2">
+        <p className="caption font-semibold uppercase tracking-[2px] text-primary">
+          Adjust the inputs — results update instantly
+        </p>
+        <h2 className="heading-3 font-medium text-text-primary">Build your content package</h2>
+      </div>
 
-          {step && (
-            <ToolOptionGroup
-              question={step.question}
-              options={step.options}
-              value={selectedValue}
-              onSelect={(value) => handleSelect(step.key, value)}
-            />
-          )}
+      <SelectControl
+        label="Management tier"
+        value={inputs.tier}
+        options={TIER_OPTIONS}
+        onChange={(value) => setField('tier', value)}
+      />
+      <p className="-mt-4 caption leading-relaxed text-text-secondary">
+        {estimate.tier.description}
+      </p>
 
-          {isResult && recommendation && (
-            <div className="flex flex-col items-start gap-5">
-              <p className="caption uppercase tracking-[1px] text-primary">Your recommendation</p>
-              <h3 className="heading-2 font-medium text-text-primary">
-                {recommendation.name} Package
-              </h3>
-              <p className="body-md leading-relaxed text-text-secondary">{recommendation.tagline}</p>
-              <ul className="flex flex-col gap-3">
-                {recommendation.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                    <span className="body-md leading-relaxed text-text-primary">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="caption leading-relaxed text-text-secondary">
-                Includes ads management for a {formatPeso(recommendation.includedAdBudget)} monthly
-                ad budget (ad spend is client-funded). Package pricing is confirmed in your
-                strategy session.
-              </p>
-            </div>
-          )}
+      <SliderControl
+        label="Number of platforms"
+        value={inputs.platforms}
+        min={SMM_SLIDER_RANGE.platforms.min}
+        max={SMM_SLIDER_RANGE.platforms.max}
+        step={SMM_SLIDER_RANGE.platforms.step}
+        format={count}
+        onChange={(value) => setField('platforms', value)}
+      />
 
-          {/* Nav buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            {isResult ? (
-              <Button variant="secondary" showArrow={false} onClick={reset}>
-                Start Over
-              </Button>
-            ) : (
-              <Button
-                variant="secondary"
-                showArrow={false}
-                onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
-                disabled={stepIndex === 0}
-                className={stepIndex === 0 ? 'pointer-events-none opacity-0' : ''}
-              >
-                Back
-              </Button>
-            )}
+      <SliderControl
+        label="Posts per week"
+        value={inputs.postsPerWeek}
+        min={SMM_SLIDER_RANGE.postsPerWeek.min}
+        max={SMM_SLIDER_RANGE.postsPerWeek.max}
+        step={SMM_SLIDER_RANGE.postsPerWeek.step}
+        format={count}
+        onChange={(value) => setField('postsPerWeek', value)}
+      />
 
-            {isResult ? (
-              <Link href="/contact">
-                <Button>Inquire Now</Button>
-              </Link>
-            ) : (
-              <Button
-                onClick={() => setStepIndex((i) => i + 1)}
-                disabled={!selectedValue}
-                className={!selectedValue ? 'pointer-events-none opacity-50' : ''}
-              >
-                {stepIndex === SMM_STEPS.length - 1 ? 'See My Match' : 'Next'}
-              </Button>
-            )}
-          </div>
-        </div>
-      </Row>
-    </Section>
+      <CheckboxGroup
+        label="Add-on services"
+        options={SMM_ADD_ONS}
+        values={inputs.addOns}
+        onToggle={toggleAddOn}
+      />
+
+      {hasAds && (
+        <SliderControl
+          label="Monthly ad budget"
+          value={inputs.adBudget}
+          min={SMM_SLIDER_RANGE.adBudget.min}
+          max={SMM_SLIDER_RANGE.adBudget.max}
+          step={SMM_SLIDER_RANGE.adBudget.step}
+          onChange={(value) => setField('adBudget', value)}
+        />
+      )}
+
+      <ToolResultCard tiles={tiles} footnote={footnote} />
+
+      <button
+        type="button"
+        onClick={() => setInputs(SMM_DEFAULT_INPUTS)}
+        className="self-start caption font-semibold uppercase tracking-[1px] text-text-secondary underline transition-colors duration-200 hover:text-primary"
+      >
+        Reset to defaults
+      </button>
+    </CalculatorShell>
   )
 }
 

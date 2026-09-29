@@ -10,19 +10,23 @@ const FALLBACK_SUBTEXT =
 
 interface ToolIntroSectionProps {
   data?: ToolDetailContent | null
+  /** Per-tool copy, since one route cannot pass distinct CMS fields for each tool yet. */
+  preHeader?: string
+  heading?: string
+  subtext?: string
 }
 
-function ToolIntroSection({ data }: ToolIntroSectionProps) {
-  const preHeader = data?.preHeader || FALLBACK_PREHEADER
-  const heading = data?.heading || FALLBACK_HEADING
-  const subtext = data?.subtext || FALLBACK_SUBTEXT
+function ToolIntroSection({ data, preHeader, heading, subtext }: ToolIntroSectionProps) {
+  const resolvedPreHeader = preHeader || data?.preHeader || FALLBACK_PREHEADER
+  const resolvedHeading = heading || data?.heading || FALLBACK_HEADING
+  const resolvedSubtext = subtext || data?.subtext || FALLBACK_SUBTEXT
 
   return (
     <Section className="bg-white py-[40px] md:py-[50px]">
       <Row className="flex flex-col items-center gap-4 text-center">
-        <p className="caption w-full uppercase tracking-[2px] text-primary">{preHeader}</p>
-        <h2 className="heading-2 font-medium text-text-primary">{heading}</h2>
-        <p className="body-md leading-relaxed text-text-secondary max-w-[720px]">{subtext}</p>
+        <p className="caption w-full uppercase tracking-[2px] text-primary">{resolvedPreHeader}</p>
+        <h2 className="heading-2 font-medium text-text-primary">{resolvedHeading}</h2>
+        <p className="body-md leading-relaxed text-text-secondary max-w-[720px]">{resolvedSubtext}</p>
       </Row>
     </Section>
   )
