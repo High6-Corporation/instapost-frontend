@@ -18,7 +18,7 @@ import { TestimonialsSection } from "@/components/sections/homepage/Testimonials
 import { ProofSection } from "@/components/sections/homepage/ProofSection"
 import { HomeCtaSection } from "@/components/sections/homepage/HomeCtaSection"
 import type { Metadata } from 'next'
-import { getPageSEO } from '@/lib/seo'
+import { getPageMetadata } from '@/lib/seo'
 import { wpGraphQLPersistedQuery } from '@/lib/wp-graphql'
 
 // Hero section types
@@ -185,16 +185,7 @@ const HOMEPAGE_QUERY_ID = '3b54aaa4a17ae14f1bcba83981249447f2bd21a290cba208fd105
 const CLIENTS_QUERY_ID = '15529439a63f75d6da84def5dc65e1143b41386acb0f63b27e12886b8b4dd055'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const pageSEO = await getPageSEO('home')
-  if (!pageSEO?.seo) return {}
-  return {
-    title: pageSEO.seo.title,
-    description: pageSEO.seo.description,
-    keywords: pageSEO.seo.focusKeywords ?? undefined,
-    alternates: {
-      canonical: pageSEO.seo.canonicalUrl ?? undefined,
-    },
-  }
+  return getPageMetadata('home', '/')
 }
 
 export default async function Home() {

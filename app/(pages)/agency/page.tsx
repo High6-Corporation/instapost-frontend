@@ -5,22 +5,13 @@ import { CtaSection } from "@/components/global/CtaSection";
 import { IntroText } from "@/components/sections/packages/IntroText";
 import { AgencyPageClient } from "@/components/sections/agency/AgencyPageClient";
 import type { Metadata } from 'next'
-import { getPageSEO } from '@/lib/seo'
+import { getPageMetadata } from '@/lib/seo'
 
 // Agency page — the ORIGINAL (public) design: the per-package card stack.
 // Kept on the live /agency URL so client viewing is unaffected while the
 // "Full Catalog" redesign is trialled at /agency-1.
 export async function generateMetadata(): Promise<Metadata> {
-  const pageSEO = await getPageSEO('agency')
-  if (!pageSEO?.seo) return {}
-  return {
-    title: pageSEO.seo.title,
-    description: pageSEO.seo.description,
-    keywords: pageSEO.seo.focusKeywords ?? undefined,
-    alternates: {
-      canonical: pageSEO.seo.canonicalUrl ?? undefined,
-    },
-  }
+  return getPageMetadata('agency', '/agency')
 }
 
 export default function Agency() {

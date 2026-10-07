@@ -4,19 +4,10 @@ import FAQSection from '@/components/sections/faq/FAQSection';
 import Footer from '@/components/layout/Footer';
 import BackToTop from '@/components/global/BackToTop';
 import type { Metadata } from 'next'
-import { getPageSEO } from '@/lib/seo'
+import { getPageMetadata } from '@/lib/seo'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const pageSEO = await getPageSEO('faq')
-  if (!pageSEO?.seo) return {}
-  return {
-    title: pageSEO.seo.title,
-    description: pageSEO.seo.description,
-    keywords: pageSEO.seo.focusKeywords ?? undefined,
-    alternates: {
-      canonical: pageSEO.seo.canonicalUrl ?? undefined,
-    },
-  }
+  return getPageMetadata('faq', '/faq')
 }
 
 export default function FAQPage() {

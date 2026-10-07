@@ -6,19 +6,10 @@ import Row from '@/components/layout/Row'
 import Image from 'next/image'
 import ContactFormSection from '@/components/sections/contact/ContactFormSection'
 import type { Metadata } from 'next'
-import { getPageSEO } from '@/lib/seo'
+import { getPageMetadata } from '@/lib/seo'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const pageSEO = await getPageSEO('contact-us')
-  if (!pageSEO?.seo) return {}
-  return {
-    title: pageSEO.seo.title,
-    description: pageSEO.seo.description,
-    keywords: pageSEO.seo.focusKeywords ?? undefined,
-    alternates: {
-      canonical: pageSEO.seo.canonicalUrl ?? undefined,
-    },
-  }
+  return getPageMetadata('contact-us', '/contact')
 }
 
 export default function ContactPage() {

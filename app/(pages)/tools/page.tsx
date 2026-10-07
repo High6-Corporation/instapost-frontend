@@ -4,7 +4,7 @@ import { CtaSection } from '@/components/global/CtaSection'
 import { ToolsHeroSection } from '@/components/sections/tools/ToolsHeroSection'
 import { ToolsGridSection } from '@/components/sections/tools/ToolsGridSection'
 import type { Metadata } from 'next'
-import { getPageSEO } from '@/lib/seo'
+import { getPageSEO, absoluteUrl } from '@/lib/seo'
 
 // Pre-launch: these pages are intentionally unlisted (no nav/footer link), but they are
 // still reachable by direct URL. Keep them out of search results until the client approves.
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSEO.seo.description,
     keywords: pageSEO.seo.focusKeywords ?? undefined,
     alternates: {
-      canonical: pageSEO.seo.canonicalUrl ?? undefined,
+      canonical: absoluteUrl('/tools'),
     },
     robots: NO_INDEX,
   }

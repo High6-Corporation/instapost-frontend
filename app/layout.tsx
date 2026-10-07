@@ -8,6 +8,9 @@ import { QuoteModalProvider } from '@/components/sections/quote/QuoteModalProvid
 import QuoteModalRenderer from '@/components/sections/quote/QuoteModalRenderer'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://instapost.co',
+  ),
   title: {
     template: '%s | Instapost',
     default: 'Instapost - Your Content Platform',
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Instapost - Your Content Platform',
     description: 'Instapost - Modern content and commerce platform',
-    url: 'https://instapost.beta01.site',
+    url: 'https://instapost.co',
     siteName: 'Instapost',
     images: [
       {

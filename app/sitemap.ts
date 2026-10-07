@@ -72,10 +72,13 @@ async function fetchWooProducts(perPage = 100): Promise<WPItem[]> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
 
-  // Fetch all dynamic content in parallel
-  const [posts, pages, industries, products] = await Promise.all([
+  // Fetch all dynamic content in parallel.
+  // NOTE: WP "pages" are intentionally NOT emitted here. Every marketing page
+  // already lives in STATIC_ROUTES with its real frontend path, and the WP page
+  // slugs (about-us, contact-us, home…) do not match those routes — emitting them
+  // produced duplicate URLs and dead /about-us //contact-us entries.
+  const [posts, industries, products] = await Promise.all([
     fetchWPRest('posts'),
-    fetchWPRest('pages'),
     fetchWPRest('industry'),
     fetchWooProducts(),
   ])
@@ -87,17 +90,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
     lastModified: safeDate(p.modified_gmt ?? p.modified, now),
   }))
-
-  // Pages → /[slug] (exclude homepage-related slugs)
-  const excludedSlugs = new Set(['home', 'front-page', 'sample-page'])
-  const pageEntries: MetadataRoute.Sitemap = pages
-    .filter((p) => !excludedSlugs.has(p.slug))
-    .map((p) => ({
-      url: `/${p.slug}`,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-      lastModified: safeDate(p.modified_gmt ?? p.modified, now),
-    }))
 
   // Industries → /industries/[slug]
   const industryEntries: MetadataRoute.Sitemap = industries.map((p) => ({
@@ -119,7 +111,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const allEntries = [
     ...STATIC_ROUTES.map((r) => ({ ...r, url: `${SITE_URL}${r.url}` })),
     ...postEntries.map((r) => ({ ...r, url: `${SITE_URL}${r.url}` })),
-    ...pageEntries.map((r) => ({ ...r, url: `${SITE_URL}${r.url}` })),
     ...industryEntries.map((r) => ({ ...r, url: `${SITE_URL}${r.url}` })),
     ...productEntries.map((r) => ({ ...r, url: `${SITE_URL}${r.url}` })),
   ]

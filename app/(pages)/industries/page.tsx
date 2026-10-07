@@ -7,21 +7,12 @@ import { IndustryCard } from '@/components/shared/IndustryCard'
 import { CtaSection } from '@/components/global/CtaSection'
 import { getIndustries } from '@/lib/industries'
 import type { Metadata } from 'next'
-import { getPageSEO } from '@/lib/seo'
+import { getPageMetadata } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const pageSEO = await getPageSEO('industries')
-  if (!pageSEO?.seo) return {}
-  return {
-    title: pageSEO.seo.title,
-    description: pageSEO.seo.description,
-    keywords: pageSEO.seo.focusKeywords ?? undefined,
-    alternates: {
-      canonical: pageSEO.seo.canonicalUrl ?? undefined,
-    },
-  }
+  return getPageMetadata('industries', '/industries')
 }
 
 export default async function IndustriesPage() {

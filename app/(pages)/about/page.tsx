@@ -13,19 +13,10 @@ import { CtaSection } from '@/components/global/CtaSection'
 import Footer from '@/components/layout/Footer'
 import { getAboutPageData, type AboutPageData } from '@/lib/about'
 import type { Metadata } from 'next'
-import { getPageSEO } from '@/lib/seo'
+import { getPageMetadata } from '@/lib/seo'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const pageSEO = await getPageSEO('about-us')
-  if (!pageSEO?.seo) return {}
-  return {
-    title: pageSEO.seo.title,
-    description: pageSEO.seo.description,
-    keywords: pageSEO.seo.focusKeywords ?? undefined,
-    alternates: {
-      canonical: pageSEO.seo.canonicalUrl ?? undefined,
-    },
-  }
+  return getPageMetadata('about-us', '/about')
 }
 
 export default async function AboutPage() {
